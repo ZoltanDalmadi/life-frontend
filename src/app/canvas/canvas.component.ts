@@ -28,43 +28,37 @@ export class CanvasComponent implements AfterViewInit {
     canvas.height = this.height;
 
     this.ctx = canvas.getContext('2d');
-    this.ctx.translate(this.width / 2, this.height / 2);
-
-    this.service.initUniverse(5, 5);
-    this.service.setRules([2, 3], [3]);
-
-    const testState = [
-      0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0,
-      0, 1, 1, 1, 0,
-      0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0,
-    ];
-
-    this.service.loadState(testState);
     this.service.state.subscribe(state => this.draw(this.ctx, state));
   }
 
-  draw(ctx, state) {
+  private draw(ctx, state) {
     state.forEach(cell => {
       if (cell.alive) {
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = 'black';
       } else {
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = '#eee';
       }
 
-      ctx.fillRect(cell.x * 20, cell.y * 20, 20, 20);
+      ctx.fillRect(cell.x * 10, cell.y * 10, 10, 10);
     });
 
-    ctx.beginPath();
-    ctx.moveTo(0, -100);
-    ctx.lineTo(0, 100);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(-100, 0);
-    ctx.lineTo(100, 0);
-    ctx.stroke();
+    this.drawGrid(ctx);
   }
 
+  private drawGrid(ctx) {
+    ctx.strokeStyle = '#ccc';
+    for (let i = 0; i < this.height; i += 10) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(this.width, i);
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < this.width; i += 10) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, this.height);
+      ctx.stroke();
+    }
+  }
 }
