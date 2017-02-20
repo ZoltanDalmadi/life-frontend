@@ -11,17 +11,11 @@ import { State } from './life.service';
 export class FileService {
 
   uploader: FileUploader;
-
-  private _filename: BehaviorSubject<string> = new BehaviorSubject('');
   private _parsedFile: Subject<State> = new Subject();
 
   constructor(private http: Http) {
     this.uploader = new FileUploader({ url: '/api/upload-file' });
     this.uploader.onCompleteItem = (_, response) => this.downloadParsed();
-  }
-
-  get filename(): Observable<string> {
-    return this._filename.asObservable();
   }
 
   get parsedFile(): Observable<State> {
