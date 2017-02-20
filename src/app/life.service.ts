@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 
@@ -8,15 +9,25 @@ interface Cell {
   alive: boolean;
 }
 
-interface Rules {
+export interface Rules {
   toSurvive: Array<number>;
   toComeAlive: Array<number>;
+}
+
+export interface Block {
+  start: { x: number, y: number };
+  cells: Array<Array<number>>;
+}
+
+export interface State {
+  rules: Rules;
+  blocks: Array<Block>;
 }
 
 @Injectable()
 export class LifeService {
 
-  private _state: BehaviorSubject<Array<Cell>>;
+  private _state: Subject<Array<Cell>>;
   private _generations: BehaviorSubject<number>;
   private rules: Rules;
   private cols: number;
@@ -24,7 +35,7 @@ export class LifeService {
   private universe = [];
 
   constructor() {
-    this._state = new BehaviorSubject([]);
+    this._state = new Subject();
     this._generations = new BehaviorSubject(0);
   }
 
@@ -50,12 +61,23 @@ export class LifeService {
     this._state.next(this.universe);
   }
 
-  setRules(toSurvive: Array<number>, toComeAlive: Array<number>): void {
-    this.rules = { toSurvive, toComeAlive };
+  setRules(rules: Rules): void {
+    this.rules = rules;
   }
 
-  loadState(state: Array<number>): void {
-    this.universe.forEach((cell, index) => cell.alive = state[index]);
+  loadState(state: State): void {
+    this.universe.forEach(cell => cell.alive = false);
+
+    state.blocks.forEach(block => {
+      const x = block.start.x;
+      let y = block.start.y;
+      let index = y * this.cols + x;
+      block.cells.forEach(cellLine => {
+        cellLine.forEach(cell => this.universe[index++].alive = cell);
+        index = ++y * this.cols + x;
+      });
+    });
+
     this._state.next(this.universe);
     this._generations.next(0);
   }
