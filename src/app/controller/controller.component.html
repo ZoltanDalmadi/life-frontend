@@ -1,6 +1,7 @@
 <button md-raised-button color="primary" (click)="stop()"><md-icon>stop</md-icon></button>
 <button md-raised-button color="primary" (click)="play()"><md-icon>play_arrow</md-icon></button>
 <button md-raised-button color="primary" (click)="next()"><md-icon>skip_next</md-icon></button>
-<button md-raised-button color="primary"><md-icon>file_upload</md-icon></button>
+<button md-raised-button color="primary" (click)="upload()"><md-icon>file_upload</md-icon></button>
+<input type="file" ng2FileSelect [uploader]="fileService.uploader">
 
 {{ service.generations | async }}

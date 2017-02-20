@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/observable/interval';
 
 import { LifeService } from '../life.service';
+import { FileService } from '../file.service';
 
 @Component({
   selector: 'app-controller',
@@ -16,9 +17,17 @@ export class ControllerComponent implements OnInit {
   private handler: Subscription;
   private playing = false;
 
-  constructor(private service: LifeService) { }
+  constructor(
+    private service: LifeService,
+    private fileService: FileService
+  ) { }
 
   ngOnInit() {
+    this.fileService.parsedFile.subscribe(state => {
+      this.service.initUniverse(80, 60);
+      this.service.setRules(state.rules);
+      this.service.loadState(state);
+    });
   }
 
   next() {
@@ -32,7 +41,7 @@ export class ControllerComponent implements OnInit {
     }
 
     this.playing = true;
-    this.handler = Observable.interval(250)
+    this.handler = Observable.interval(150)
       .subscribe(() => this.service.nextGeneration());
   }
 
@@ -41,6 +50,10 @@ export class ControllerComponent implements OnInit {
       this.handler.unsubscribe();
       this.playing = false;
     }
+  }
+
+  upload() {
+    this.fileService.upload(80, 60);
   }
 
 }
