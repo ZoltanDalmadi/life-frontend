@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { Observable } from 'rxjs/Observable';
@@ -8,14 +8,18 @@ import 'rxjs/add/observable/interval';
 import { LifeService } from '../life.service';
 import { FileService } from '../file.service';
 
+import config from '../app.config';
+
 @Component({
   selector: 'app-controller',
-  templateUrl: './controller.component.html',
-  styleUrls: ['./controller.component.css']
+  templateUrl: './controller.component.html'
 })
-export class ControllerComponent implements OnInit {
+export class ControllerComponent implements OnInit, OnDestroy {
   private handler: Subscription;
   private playing = false;
+  private hasFile = false;
+
+  private subs: Array<Subscription> = [];
 
   constructor(
     private service: LifeService,
@@ -23,11 +27,17 @@ export class ControllerComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.fileService.parsedFile.subscribe(state => {
-      this.service.initUniverse(80, 60);
+    this.subs.push(this.fileService.parsedFile.subscribe(state => {
+      this.service.initUniverse(config.cols, config.rows);
       this.service.setRules(state.rules);
       this.service.loadState(state);
-    });
+    }));
+
+    this.subs.push(this.service.state.subscribe(_ => this.hasFile = true));
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   next() {
@@ -41,7 +51,7 @@ export class ControllerComponent implements OnInit {
     }
 
     this.playing = true;
-    this.handler = Observable.interval(150)
+    this.handler = Observable.interval(config.interval)
       .subscribe(() => this.service.nextGeneration());
   }
 
@@ -53,7 +63,7 @@ export class ControllerComponent implements OnInit {
   }
 
   upload() {
-    this.fileService.upload(80, 60);
+    this.fileService.upload(config.cols, config.rows);
   }
 
 }
