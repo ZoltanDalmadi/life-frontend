@@ -15,7 +15,14 @@ export class FileService {
 
   constructor(private http: Http) {
     this.uploader = new FileUploader({ url: '/api/upload-file' });
-    this.uploader.onCompleteItem = (_, response) => this.downloadParsed();
+    this.uploader.onCompleteItem = (_, response, status) => {
+      this.uploader.clearQueue();
+      if (status === 200) {
+        this.downloadParsed();
+      } else {
+        alert(response);
+      }
+    };
   }
 
   get parsedFile(): Observable<State> {
