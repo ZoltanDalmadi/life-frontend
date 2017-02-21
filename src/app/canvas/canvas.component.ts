@@ -3,20 +3,19 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
-  Input,
+  Input
 } from '@angular/core';
 
 import { LifeService } from '../life.service';
+import config from '../app.config';
 
 @Component({
   selector: 'app-canvas',
-  templateUrl: './canvas.component.html',
+  template: '<canvas #canvas></canvas>',
   styleUrls: [ './canvas.component.css' ]
 })
 export class CanvasComponent implements AfterViewInit {
   @ViewChild('canvas') canvasRef: ElementRef;
-  @Input() width: number;
-  @Input() height: number;
 
   private ctx: any;
 
@@ -24,8 +23,8 @@ export class CanvasComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     const canvas = this.canvasRef.nativeElement;
-    canvas.width = this.width;
-    canvas.height = this.height;
+    canvas.width = config.canvasWidth;
+    canvas.height = config.canvasHeight;
 
     this.ctx = canvas.getContext('2d');
     this.service.state.subscribe(state => this.draw(this.ctx, state));
@@ -39,25 +38,28 @@ export class CanvasComponent implements AfterViewInit {
         ctx.fillStyle = '#eee';
       }
 
-      ctx.fillRect(cell.x * 10, cell.y * 10, 10, 10);
+      const cellSize = config.cellSize;
+      ctx.fillRect(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize);
     });
 
     this.drawGrid(ctx);
   }
 
   private drawGrid(ctx) {
-    ctx.strokeStyle = '#ccc';
-    for (let i = 0; i < this.height; i += 10) {
+    ctx.strokeStyle = '#ddd';
+    const cellSize = config.cellSize;
+
+    for (let i = 0; i < config.canvasHeight; i += cellSize) {
       ctx.beginPath();
       ctx.moveTo(0, i);
-      ctx.lineTo(this.width, i);
+      ctx.lineTo(config.canvasWidth, i);
       ctx.stroke();
     }
 
-    for (let i = 0; i < this.width; i += 10) {
+    for (let i = 0; i < config.canvasWidth; i += cellSize) {
       ctx.beginPath();
       ctx.moveTo(i, 0);
-      ctx.lineTo(i, this.height);
+      ctx.lineTo(i, config.canvasHeight);
       ctx.stroke();
     }
   }
