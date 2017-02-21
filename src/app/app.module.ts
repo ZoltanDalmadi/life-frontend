@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { FileSelectDirective } from 'ng2-file-upload';
+import { FileUploadModule } from 'ng2-file-upload';
 
 import { AppComponent } from './app.component';
 import { CanvasComponent } from './canvas/canvas.component';
@@ -19,13 +19,13 @@ import { FileService } from './file.service';
     AppComponent,
     CanvasComponent,
     ControllerComponent,
-    FileSelectDirective
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     HttpModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    FileUploadModule
   ],
   providers: [LifeService, FileService],
   bootstrap: [AppComponent]
