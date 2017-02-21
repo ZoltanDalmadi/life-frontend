@@ -7,6 +7,10 @@ import { Observable } from 'rxjs/Observable';
 
 import { State } from './life.service';
 
+/**
+ * This service is responsible for uploading *.lif files to the backend
+ * as well as downloading the parsed result.
+ */
 @Injectable()
 export class FileService {
 

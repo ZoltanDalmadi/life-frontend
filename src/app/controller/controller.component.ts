@@ -10,6 +10,11 @@ import { FileService } from '../file.service';
 
 import config from '../app.config';
 
+/**
+ * This component holds the buttons that allows
+ * interaction with the application. Also it calls the proper
+ * service methods.
+ */
 @Component({
   selector: 'app-controller',
   templateUrl: './controller.component.html'

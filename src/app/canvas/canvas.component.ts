@@ -9,6 +9,9 @@ import {
 import { LifeService } from '../life.service';
 import config from '../app.config';
 
+/**
+ * This component holds the visual representation of the game universe.
+ */
 @Component({
   selector: 'app-canvas',
   template: '<canvas #canvas></canvas>',

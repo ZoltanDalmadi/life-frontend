@@ -24,9 +24,11 @@ export interface State {
   blocks: Array<Block>;
 }
 
+/**
+ * Service which contains the "business logic" of the application.
+ */
 @Injectable()
 export class LifeService {
-
   private _state: Subject<Array<Cell>>;
   private _generations: BehaviorSubject<number>;
   private rules: Rules;
@@ -47,6 +49,12 @@ export class LifeService {
     return this._generations.asObservable();
   }
 
+  /**
+   * Inits the game of life universe to the specified colums and rows.
+   *
+   * @param cols the desired columns of the universe
+   * @param rows the desired rows of the universe
+   */
   initUniverse(cols: number, rows: number): void {
     this.cols = cols;
     this.rows = rows;
@@ -65,6 +73,11 @@ export class LifeService {
     this.rules = rules;
   }
 
+  /**
+   * Loads the provided state into an already initialized universe.
+   *
+   * @param state the state to load.
+   */
   loadState(state: State): void {
     this.universe.forEach(cell => cell.alive = false);
 
@@ -82,17 +95,35 @@ export class LifeService {
     this._generations.next(0);
   }
 
-  nextGeneration() {
+  /**
+   * Calculates the next generation of the game universe.
+   */
+  nextGeneration(): void {
     this.universe = this.universe.map(this.evolve, this);
     this._state.next(this.universe);
     this._generations.next(this._generations.getValue() + 1);
   }
 
+  /**
+   * Checks if a cell on the specified coordinates is alive.
+   *
+   * @param x the x coordinate of the cell
+   * @param y the y coordinate of the cell
+   * @returns true if the cell is alive, false otherwise
+   */
   private isAlive(x: number, y: number): boolean {
     return this.universe[y * this.cols + x].alive;
   }
 
-  private evolve(cell: Cell) {
+  /**
+   * "Evolves" a cell. Checks its neighbors, and decides based
+   * on the rules if it should survive, die or come alive in
+   * the next generation.
+   *
+   * @param cell the Cell to "evolve"
+   * @returns a new Cell
+   */
+  private evolve(cell: Cell): Cell {
     const x = cell.x;
     const y = cell.y;
     let alive = cell.alive;
@@ -117,6 +148,13 @@ export class LifeService {
     return { x, y, alive };
   }
 
+  /**
+   * Checks if a position is inside the game universe.
+   *
+   * @param x the x coordinate to check
+   * @param y the y coordinate to check
+   * @returns true if the coordinate is inside the universe, false otherwise
+   */
   private positionValid(x: number, y: number): boolean {
     return x >= 0 && x < this.cols && y >= 0 && y < this.rows;
   }
