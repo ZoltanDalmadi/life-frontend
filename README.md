@@ -1,4 +1,4 @@
-# life-frontent
+# life-frontend
 An example front-end client that uses the `.lif` [file parser service](https://github.com/ZoltanDalmadi/life-backend). 
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
